@@ -12,7 +12,7 @@ function App() {
     const headers = new Headers({
       Accept: "*/*",
     });
-    fetch("http://localhost:3000/tasks", {
+    fetch(process.env.REACT_APP_API_ENDPOINT + "/tasks", {
       method: "GET",
       headers: headers,
       mode: "cors",
@@ -35,7 +35,7 @@ function App() {
     const headers = new Headers({
       Accept: "*/*",
     });
-    fetch("http://localhost:3000/tasks", {
+    fetch(process.env.REACT_APP_API_ENDPOINT + "/tasks", {
       method: "POST",
       headers: headers,
       body: new URLSearchParams({

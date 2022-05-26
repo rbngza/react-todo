@@ -12,7 +12,7 @@ function Task(props) {
       };
 
     const updateTask = (e) => {
-        const url = "http://localhost:3000/tasks/" + props.task.id;
+        const url = process.env.REACT_APP_API_ENDPOINT + "/tasks/" + props.task.id;
         const headers = new Headers({
             "Accept": "*/*",
           });
@@ -33,7 +33,7 @@ function Task(props) {
     };
 
     const deleteTask = (e) => {
-        const url = "http://localhost:3000/tasks/" + props.task.id;
+        const url = process.env.REACT_APP_API_ENDPOINT + "/tasks/" + props.task.id;
         const headers = new Headers({
             "Accept": "*/*",
           });
@@ -44,7 +44,7 @@ function Task(props) {
             if(!response.ok){
                 return response.json();
             }
-            }).then(alert("Task deleted with id: " + props.task.id)).catch((error) => {
+            }).then(alert(process.env.REACT_APP_API_ENDPOINT + props.task.id)).catch((error) => {
             alert(error.message)
         });
     };
