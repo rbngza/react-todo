@@ -1,23 +1,78 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { Container, Navbar, NavLink, Form } from 'react-bootstrap';
+import Task from './components/task';
+import { PlusLg } from 'react-bootstrap-icons';
 
 function App() {
+  let [tasks, setTasks] = useState([]);
+
+  let [newTask, setNewTask] = useState("");
+
+  useEffect(() => {
+    const headers = new Headers({
+      Accept: "*/*",
+    });
+    fetch("http://localhost:3000/tasks", {
+      method: "GET",
+      headers: headers,
+      mode: "cors",
+    })
+      .then((response) => {
+        console.log(response)
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw Error(`Error: ${response.status}`);
+        }
+      })
+      .then((data) => setTasks(data.tasks))
+      .catch((error) => {
+        alert(error.message);
+      });
+  }, [tasks.length]);
+
+  const createTodo = () => {
+    const headers = new Headers({
+      Accept: "*/*",
+    });
+    fetch("http://localhost:3000/tasks", {
+      method: "POST",
+      headers: headers,
+      body: new URLSearchParams({
+        'description': newTask,
+        'done': false
+      })
+    })
+      .then((response) => {
+        console.log(response)
+        if (response.ok) {
+          return response;
+        }
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Navbar bg="dark" variant="dark">
+      <Container>
+        <NavLink to="/" className="navbar-brand"> ToDo in React </NavLink>
+      </Container>
+    </Navbar>
+    <Form className="mb-3">
+    <Form.Control
+    type="input"
+    onChange={event => setNewTask(event.target.value)}
+    aria-describedby="create todo"/>
+    <PlusLg onClick={createTodo}/> Add todo
+    <div key={`default-checkbox`} className="mb-3">
+    {tasks.map((task) => (
+      <Task key={task.id} task = {task}/>
+    ))}
+    </div>
+    </Form>
     </div>
   );
 }
