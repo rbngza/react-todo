@@ -7,6 +7,20 @@ function Task(props) {
     let [updatedDescription, setDescription] = useState(props.task.description);
     let [updatedStatus, setStatus] = useState(props.task.done);
 
+    const UPDATE_TASK = gql`
+    mutation updateTask($updateTaskId: ID!, $description: String, $done: Boolean) {
+        updateTask(id: $updateTaskId, description: $description, done: $done)
+      }
+    `;
+
+    const DELEte_TASK = gql`
+    mutation deleteTask($deleteTaskId: ID!) {
+        deleteTask(id: $deleteTaskId) {
+          deletedTaskId
+        }
+      }
+    `;
+
     const handleStatusChange = () => {
         setStatus(!updatedStatus);
       };
