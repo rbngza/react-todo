@@ -8,7 +8,7 @@ import QueryResult from './components/query-result';
 function App() {
   let [newTask, setNewTask] = useState('');
 
-  const GET_TASK = gql`
+  const GET_TASKS = gql`
     query getTasks {
       tasks {
         id
@@ -30,7 +30,7 @@ function App() {
     }
   `;
 
-  const { loading, error, data } = useQuery(GET_TASK);
+  const { loading, error, data } = useQuery(GET_TASKS);
 
   const [createTodo] = useMutation(CREATE_TASK, {
     variables: { description: newTask, done: false },
@@ -60,7 +60,7 @@ function App() {
         <div key={`default-checkbox`} className="mb-3">
           <QueryResult error={error} loading={loading} data={data}>
             {data?.tasks?.map((task, index) => (
-              <Task key={task.id} props={task} />
+              <Task key={task.id} task={task} />
             ))}
           </QueryResult>
         </div>

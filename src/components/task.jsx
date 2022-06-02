@@ -26,7 +26,7 @@ function Task(props) {
         setStatus(!updatedStatus);
       };
 
-      const [updateTask] = useMutation(UPDATE_TASK, {
+    const [updateTask] = useMutation(UPDATE_TASK, {
         variables: { id: id, description: updatedDescription, done: updatedStatus },
         // to observe what the mutation response returns
         onCompleted: (data) => {
