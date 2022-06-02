@@ -2,7 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import App from './App';
-import { ApolloClient } from '@apollo/client';
+import {
+  ApolloProvider,
+  ApolloClient,
+  InMemoryCache,
+} from '@apollo/client';
 
 const client = new ApolloClient({
   uri: process.env.REACT_APP_API_ENDPOINT,

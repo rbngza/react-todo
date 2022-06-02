@@ -1,9 +1,10 @@
 import React, { Fragment, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import {FileEarmarkXFill} from "react-bootstrap-icons";
+import { gql, useMutation } from '@apollo/client';
 
 function Task(props) {
-
+    let [id] = useState(props.task.id);
     let [updatedDescription, setDescription] = useState(props.task.description);
     let [updatedStatus, setStatus] = useState(props.task.done);
 
@@ -13,7 +14,7 @@ function Task(props) {
       }
     `;
 
-    const DELEte_TASK = gql`
+    const DELETE_TASK = gql`
     mutation deleteTask($deleteTaskId: ID!) {
         deleteTask(id: $deleteTaskId) {
           deletedTaskId
@@ -25,43 +26,21 @@ function Task(props) {
         setStatus(!updatedStatus);
       };
 
-    const updateTask = (e) => {
-        const url = process.env.REACT_APP_API_ENDPOINT + "/tasks/" + props.task.id;
-        const headers = new Headers({
-            "Accept": "*/*",
-          });
-        fetch(url, {
-            method:'PUT',
-            headers: headers,
-            body: new URLSearchParams({
-              'description': updatedDescription,
-              'done': updatedStatus
-            })
-        }).then(response => {
-            if(!response.ok){
-                return response.json();
-            }
-            }).catch((error) => {
-            alert(error.message)
-        });
-    };
+      const [updateTask] = useMutation(UPDATE_TASK, {
+        variables: { id: id, description: updatedDescription, done: updatedStatus },
+        // to observe what the mutation response returns
+        onCompleted: (data) => {
+          console.log(data);
+        },
+      });
 
-    const deleteTask = (e) => {
-        const url = process.env.REACT_APP_API_ENDPOINT + "/tasks/" + props.task.id;
-        const headers = new Headers({
-            "Accept": "*/*",
-          });
-        fetch(url, {
-            method:'DELETE',
-            headers: headers,
-        }).then(response => {
-            if(!response.ok){
-                return response.json();
-            }
-            }).then(alert(process.env.REACT_APP_API_ENDPOINT + props.task.id)).catch((error) => {
-            alert(error.message)
-        });
-    };
+    const [deleteTask] = useMutation(DELETE_TASK, {
+        variables: { deleteTaskid: id },
+        // to observe what the mutation response returns
+        onCompleted: (data) => {
+          console.log(data);
+        },
+      });
 
     return (
         <Fragment>

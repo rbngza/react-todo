@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Container, Navbar, NavLink, Form } from 'react-bootstrap';
 import Task from './components/task';
 import { PlusLg } from 'react-bootstrap-icons';
+import { useQuery, gql, useMutation } from '@apollo/client';
+import QueryResult from './components/query-result';
 
 function App() {
-  let [tasks, setTasks] = useState([]);
-
   let [newTask, setNewTask] = useState('');
 
   const GET_TASK = gql`
@@ -18,32 +18,27 @@ function App() {
     }
   `;
 
-  const { loading, error, data } = useQuery(GET_TASK, {
-    variables: { trackId },
-  });
-
-  const createTodo = () => {
-    const headers = new Headers({
-      Accept: '*/*',
-    });
-    fetch(process.env.REACT_APP_API_ENDPOINT + '/tasks', {
-      method: 'POST',
-      headers: headers,
-      body: new URLSearchParams({
-        description: newTask,
-        done: false,
-      }),
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          return response;
+  const CREATE_TASK = gql`
+    mutation createTask($description: String, $done: Boolean) {
+      createTask(description: $description, done: $done) {
+        task {
+          id
+          description
+          done
         }
-      })
-      .catch((error) => {
-        alert(error.message);
-      });
-  };
+      }
+    }
+  `;
+
+  const { loading, error, data } = useQuery(GET_TASK);
+
+  const [createTodo] = useMutation(CREATE_TASK, {
+    variables: { description: newTask, done: false },
+    // to observe what the mutation response returns
+    onCompleted: (data) => {
+      console.log(data);
+    },
+  });
 
   return (
     <div>
@@ -65,7 +60,7 @@ function App() {
         <div key={`default-checkbox`} className="mb-3">
           <QueryResult error={error} loading={loading} data={data}>
             {data?.tasks?.map((task, index) => (
-              <Task key={task.id} task={task} />
+              <Task key={task.id} props={task} />
             ))}
           </QueryResult>
         </div>
