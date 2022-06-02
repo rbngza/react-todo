@@ -10,7 +10,19 @@ import {
 
 const client = new ApolloClient({
   uri: 'https://graphqlapi.onrender.com',
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Query: {
+        fields: {
+          tasks: {
+            merge(existing, incoming) {
+              return incoming;
+            },
+          },
+        },
+      },
+    },
+  }),
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

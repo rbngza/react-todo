@@ -2,41 +2,33 @@ import React, { useState } from 'react';
 import { Container, Navbar, NavLink, Form } from 'react-bootstrap';
 import Task from './components/task';
 import { PlusLg } from 'react-bootstrap-icons';
-import { useQuery, gql, useMutation } from '@apollo/client';
+import { useQuery, useMutation } from '@apollo/client';
 import QueryResult from './components/query-result';
+import { CREATE_TASK, GET_TASKS } from './const/queries';
 
 function App() {
   let [newTask, setNewTask] = useState('');
-
-  const GET_TASKS = gql`
-    query getTasks {
-      tasks {
-        id
-        description
-        done
-      }
-    }
-  `;
-
-  const CREATE_TASK = gql`
-    mutation createTask($description: String, $done: Boolean) {
-      createTask(description: $description, done: $done) {
-        task {
-          id
-          description
-          done
-        }
-      }
-    }
-  `;
 
   const { loading, error, data } = useQuery(GET_TASKS);
 
   const [createTodo] = useMutation(CREATE_TASK, {
     variables: { description: newTask, done: false },
     // to observe what the mutation response returns
-    onCompleted: (data) => {
-      console.log(data);
+    update: (cache, { data }) => {
+      // Fetch the tasks from the cache
+      const existingTasks = cache.readQuery({
+        query: GET_TASKS,
+      });
+
+      const tasks = [data.createTask, ...existingTasks.tasks];
+
+      // Add the new task to the cache
+      cache.writeQuery({
+        query: GET_TASKS,
+        data: {
+          tasks,
+        },
+      });
     },
   });
 

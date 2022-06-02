@@ -1,25 +1,12 @@
 import React, { Fragment, useState } from "react";
 import { Form, Button } from "react-bootstrap";
 import {FileEarmarkXFill} from "react-bootstrap-icons";
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
+import { UPDATE_TASK, DELETE_TASK, GET_TASKS } from "../const/queries";
 
 function Task(props) {
     let [updatedDescription, setDescription] = useState(props.task.description);
     let [updatedStatus, setStatus] = useState(props.task.done);
-
-    const UPDATE_TASK = gql`
-    mutation updateTask($updateTaskId: ID!, $description: String, $done: Boolean) {
-        updateTask(id: $updateTaskId, description: $description, done: $done)
-      }
-    `;
-
-    const DELETE_TASK = gql`
-    mutation deleteTask($deleteTaskId: ID!) {
-        deleteTask(id: $deleteTaskId) {
-          deletedTaskId
-        }
-      }
-    `;
 
     const handleStatusChange = () => {
         setStatus(!updatedStatus);
@@ -38,9 +25,22 @@ function Task(props) {
     const [deleteTask] = useMutation(DELETE_TASK, {
         variables: { deleteTaskId: props.task.id },
         // to observe what the mutation response returns
-        onCompleted: (data) => {
-          console.log(data);
-        },
+    update: (cache, { data }) => {
+        // Fetch the tasks from the cache
+        const existingTasks = cache.readQuery({
+          query: GET_TASKS,
+        });
+  
+        const tasks = existingTasks.tasks.filter(task => task.id != data.deleteTask.deletedTaskId);
+  
+        // Add the new task to the cache
+        cache.writeQuery({
+          query: GET_TASKS,
+          data: {
+            tasks,
+          },
+        });
+      },
         onError: (error) => {
             console.log(JSON.stringify(error, null, 2));
         }
