@@ -9,7 +9,7 @@ import {
 } from '@apollo/client';
 
 const client = new ApolloClient({
-  uri: process.env.REACT_APP_API_ENDPOINT,
+  uri: process.env.GRAPHQL_API_ENDPOINT,
   cache: new InMemoryCache(),
 });
 
