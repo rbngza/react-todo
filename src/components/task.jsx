@@ -4,7 +4,6 @@ import {FileEarmarkXFill} from "react-bootstrap-icons";
 import { gql, useMutation } from '@apollo/client';
 
 function Task(props) {
-    let [id] = useState(props.task.id);
     let [updatedDescription, setDescription] = useState(props.task.description);
     let [updatedStatus, setStatus] = useState(props.task.done);
 
@@ -27,7 +26,7 @@ function Task(props) {
       };
 
     const [updateTask] = useMutation(UPDATE_TASK, {
-        variables: { id: id, description: updatedDescription, done: updatedStatus },
+        variables: { id: props.task.id, description: updatedDescription, done: updatedStatus },
         // to observe what the mutation response returns
         onCompleted: (data) => {
           console.log(data);
@@ -35,7 +34,7 @@ function Task(props) {
       });
 
     const [deleteTask] = useMutation(DELETE_TASK, {
-        variables: { deleteTaskid: id },
+        variables: { deleteTaskid: props.task.id },
         // to observe what the mutation response returns
         onCompleted: (data) => {
           console.log(data);

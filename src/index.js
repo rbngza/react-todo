@@ -9,7 +9,7 @@ import {
 } from '@apollo/client';
 
 const client = new ApolloClient({
-  uri: process.env.GRAPHQL_API_ENDPOINT,
+  uri: 'https://graphqlapi.onrender.com',
   cache: new InMemoryCache(),
 });
 
