@@ -26,19 +26,24 @@ function Task(props) {
       };
 
     const [updateTask] = useMutation(UPDATE_TASK, {
-        variables: { id: props.task.id, description: updatedDescription, done: updatedStatus },
+        variables: { updateTaskId: props.task.id, description: updatedDescription, done: updatedStatus },
         // to observe what the mutation response returns
         onCompleted: (data) => {
           console.log(data);
         },
+        onError: (error) => {
+            console.log(JSON.stringify(error, null, 2));        }
       });
 
     const [deleteTask] = useMutation(DELETE_TASK, {
-        variables: { deleteTaskid: props.task.id },
+        variables: { deleteTaskId: props.task.id },
         // to observe what the mutation response returns
         onCompleted: (data) => {
           console.log(data);
         },
+        onError: (error) => {
+            console.log(JSON.stringify(error, null, 2));
+        }
       });
 
     return (
