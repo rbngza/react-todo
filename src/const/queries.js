@@ -1,5 +1,13 @@
 import { gql } from '@apollo/client';
 
+const GOOGLE_LOGIN = gql`
+  mutation authGoogle($input: String!) {
+    authGoogle(token: $input) {
+      token
+    }
+  }
+`;
+
 const UPDATE_TASK = gql`
   mutation updateTask(
     $updateTaskId: ID!
@@ -44,4 +52,10 @@ const CREATE_TASK = gql`
   }
 `;
 
-export { CREATE_TASK, GET_TASKS, DELETE_TASK, UPDATE_TASK };
+export {
+  CREATE_TASK,
+  GET_TASKS,
+  DELETE_TASK,
+  UPDATE_TASK,
+  GOOGLE_LOGIN,
+};
